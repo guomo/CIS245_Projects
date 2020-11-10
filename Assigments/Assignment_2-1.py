@@ -30,7 +30,7 @@ def orderPrompt():
         ''' '''
         qty = input("What is the total number of feet required? ")
         
-        if qty.startswith('-') or not qty.isnumeric: # Check for bogus values
+        if qty.startswith('-') or not qty.isnumeric(): # Check for bogus values
             print("\tPlease enter a postive numeric value for number of feet.\n\n")
             qty = None # bad input, try again          
         else:
