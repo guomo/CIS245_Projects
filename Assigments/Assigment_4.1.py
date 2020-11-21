@@ -29,7 +29,7 @@ def str_as_number(aStr, neg_ok = False):
     if len(cleaned):
         retNum = int(cleaned) if float(cleaned).is_integer() else float(cleaned)
     else:
-        raise TypeError(f"No numerals found in string for conversion: ${aStr}")
+        raise TypeError(f"No numerals found in string for conversion: {aStr}")
 
     return(retNum)
 
