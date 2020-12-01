@@ -2,14 +2,7 @@
     Program     :   Assignment 5.1
     Course      :   CIS245-O321 Introduction to Programming (2213-DD)
     Author      :   Gregory Stone — gstone@my365.bellevue.edu
-    Description :   Your program will use the inheritance diagram from this week in order to create a parent class and two child classes.
-                    Your program will prompt the user to create at least one object of each type (Car and Pickup). Using a menu system and 
-                    capturing user input your program will allow the user the choice of adding a car or pickup truck and define the vehicle's 
-                    attributes. The program will use user input to define the vehicle's attributes. The options attribute in the parent class 
-                    must be a python list containing a minimum of eight (8) options common to all vehicles. (i.e. power mirrors, power locks, 
-                    remote start, backup camera, bluetooth, cruise control, etc). The user will choose from a list of options to add to the 
-                    vehicle's options list and can must choose a minimum of one vehicle option per vehicle. When the user is finished adding 
-                    vehicles to their virtual garage the program will output the vehicles in their garage and their attributes.
+    Description :   Classes to support generic vehicle abstraction.
 
 '''
 
@@ -20,9 +13,9 @@
 
 class Vehicle:
 
-    BASE_OPTS_MAP = {"Base Options" : ("Cruise Control", "Navigation System", "Heated Seats", "Power Mirrors", "Power Locks", 
-                    "Keyless Entry", "Bluetooth", "Backup Camera"), "isMultiSelect" : True}
-    FUEL_OPTS_MAP = {"Fuel Options" : ("Gasoline", "Diesel", "Hybrid", "Electric"), "isMultiSelect" : False}
+    BASE_OPTS_MAP = {"Base Options" : {'choices' : ("Cruise Control", "Navigation System", "Heated Seats", "Power Mirrors", "Power Locks", 
+                    "Keyless Entry", "Bluetooth", "Backup Camera"), "isMultiSelect" : True}}
+    FUEL_OPTS_MAP = {"Fuel Options" : {'choices' : ("Gasoline", "Diesel", "Hybrid", "Electric"), "isMultiSelect" : False}}
 
     def __init__(self, make, model, color, options = None, fuelType = None):
         """Full constructor for a Vehicle base class.
@@ -65,10 +58,10 @@ class Vehicle:
         return(self.fuelType == "Hybrid")
 
     def getBaseEquipOpts(self):
-        Vehicle.BASE_OPTS_MAP
+        return Vehicle.BASE_OPTS_MAP
 
     def getFuelOpts(self):
-        return(Car.FUEL_OPTS_MAP)
+        return Vehicle.FUEL_OPTS_MAP
 
     def __str__(self):
         toStr = f"A {self.color} {self.make} {self.model} with a {self.fuelType} powered engine.\n"
@@ -80,11 +73,13 @@ class Car(Vehicle):
     CAR_OPTS_MAP = {'Engine Size' : { 'choices': ("1.5L V3", "2.0L v4", "2.5L v5", "3.0L V6", "4.0L V8"), 'isMultiSelect' : False},
                     'Number of Doors' : { 'choices' : (2, 4, 5), 'isMultiSelect' : False}}
 
-    def __init__(self, make, model, color, options = None, fuelType = None, engineSize = None, numDoors= None):
+    def __init__(self, make, model, color, options = None, fuelType = None, engineSize = None, numDoors = 2):
     
         super().__init__(make, model, color, options, fuelType)
         self.engineSize = engineSize
-        self.numDoors = numDoors if numDoors >= 2 else 2 
+        self.numDoors = numDoors
+        superBase = super().getBaseEquipOpts()
+        self.equipOpts = {**superBase, **Car.CAR_OPTS_MAP}
 
     def getNumDoors(self):
         return self.numDoors
@@ -93,11 +88,7 @@ class Car(Vehicle):
         return self.engineSize
 
     def getBaseEquipOpts(self):
-        baseDict =  super().getBaseEquipOpts()
-        options = baseDict.get('Base Options')
-        for key, value in Vehicle.CAR_OPTS_MAP:
-            baseDict[key] = value
-        return options
+        return self.equipOpts
 
     def __str__(self):
         toStr = f"A {self.color} {self.numDoors} door {self.make} {self.model} sedan with a {self.fuelType} powered {self.engineSize} engine.\n"
@@ -114,6 +105,8 @@ class Pickup(Vehicle):
         super().__init__(make, model, color, options, fuelType)
         self.cabStyle = cabStyle
         self.bedLength = bedLength
+        superBase = super().getBaseEquipOpts()
+        self.equipOpts = {**superBase, **Car.CAR_OPTS_MAP}
 
     def __str__(self):
         toStr = f"A {self.color} {self.cabStyle} cab {self.make} {self.model} with a {self.fuelType} powered engine\n"
@@ -121,11 +114,7 @@ class Pickup(Vehicle):
         return toStr
 
     def getBaseEquipOpts(self):
-        baseDict =  super().getBaseEquipOpts()
-        options = baseDict.get('Base Options')
-        for key, value in Pickup.TRUCK_OPTS_MAP:
-            baseDict[key] = value
-        return options
+        return self.equipOpts
 
 class VirtualGarage:
 
@@ -140,4 +129,12 @@ class VirtualGarage:
     def atCapacity(self):
         return len(self.vehicles) == self.capacity
 
+    def getCapacity(self):
+        return self.capacity
+
+    def __str__(self):
+        ret_str = ""
+        for door, vehicle in enumerate(vehicles):
+            ret_str += f"In garage door #{door} we have {vehicle}"
+        return ret_str
     

@@ -46,33 +46,10 @@ def str_as_number(aStr, neg_ok = False):
 
     return(retNum)
 
-def prompt_options(prompt, optionsDict, vehicleClass):
-    answers = {}
-    for keys, value in optionsDict:
-        answers[key] = input("{prompt}")
+#~~~~~~~~~~~~~~~~~~~~~~ PROGRAM FUNCTIONS ~~~~~~~~~~~~~~~~~~
 
-
-def configure_new_vehicle(vehicleClazz):
-    make = input("What make is the make of the vehicle? ")
-    model = input("What is the model of the vehicle? ")
-    color = input("What color? ")
-    vehicle = vehicleClazz(make, model, color)
-
-    if vehicleClazz == Car:
-        print("Let's pick some options for you car...")
-    if vehicleClazz == Pickup:
-        print("Let's pick some options for you Pickup...")
-    
-    return(vehicle)
-
-
-if __name__ == "__main__":
-    system('clear')
-
-    # State Variables
+def prompt_garage_size():
     the_garage = VirtualGarage()
-
-    # Prompt for garage size
     print("Welcome to Virtual Garage, where you can fill your dream garage with your dream cars!")
     dataOK = False
     while not dataOK:
@@ -90,9 +67,41 @@ if __name__ == "__main__":
                 dataOK = True
         except:
             print("You must enter a valid integer...Try again.")
+    return the_garage
+
+def prompt_options(prompt, optionsDict):
+    print(prompt)
+    for keys in optionsDict:
+        answers[key] = input("{prompt}")
+        for key in Car.CAR_OPTS_MAP: # This is each group of options
+            cur_opts = baseDict.get(key)
+            if cur_opts[isMultiSelect]:
+                # Ask Y/N for each option and capture
+                    for choice in optsMap['choices']:
+                        c = input("Does it have {choice} Y/N?")
+
+            else:
+                prompt_str = f"Let's pick the {key} pick one from: {choices}."
+
+    return answers
+
+def configure_new_vehicle(vehicleClazz):
+    make = input("What make is the make of the vehicle? ")
+    model = input("What is the model of the vehicle? ")
+    color = input("What color? ")
+    fuel = input("What kind of fuel does it run on?")
+    vehicle = vehicleClazz(make, model, color)
+
+    opts = prompt_options(f"Let's pick some options for your {model}.", vehicle.getBaseEquipOpts())
+    return(vehicle)
+
+if __name__ == "__main__":
+    system('clear')
+    # Prompt for garage size
+    the_garage = prompt_garage_size()
     
     # Minimum of one of each vehicle type is required, so just satsify that up front
-    print("Since everyone needs a pickup and car let's start with your first car.")
+    print("Since everyone needs a car let's start with your first car.")
     car = configure_new_vehicle(Car)
     the_garage.parkVehicle(car)
     print("You always need a pickup for doing the dirty work, tell me about your Pickup truck.")
@@ -112,6 +121,8 @@ if __name__ == "__main__":
                 print("Please enter either C for a car or P for a pickup.")
 
         new_vehicle = configure_new_vehicle(clazz)
-        the_garage.parkVehicle(pickup)
+        the_garage.parkVehicle(new_vehicle)
     
-    # Print out the vehicle sin the garage
+    # Print out the vehicles in the garage
+    print(f"Congratulations! You've filled your {the_garage.getCapacity()} car garage. Let's see what's inside:\n")
+    print(the_garage)
