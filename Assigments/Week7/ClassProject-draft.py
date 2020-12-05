@@ -9,7 +9,7 @@ import re
 import argparse
 import locale
 
-def main_propmpt():
+def main_prompt():
     ''' Asks the user for a city or zip code and validates the nature of the input.
 
     '''
@@ -21,5 +21,5 @@ def open_weather_connect(options):
         and fetch the current weather. Reults are returned as a JSON object.
         @param location - options dictionary { zip : '', city : ''}
     '''
-    request
+    
     pass
