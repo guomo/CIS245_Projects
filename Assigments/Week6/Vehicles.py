@@ -5,18 +5,13 @@
     Description :   Classes to support generic vehicle abstraction.
 
 '''
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONSTANTS ~~~~~~~~~~~~~~~~~~
-
+import utils
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~ CLASS DEFINTIONS ~~~~~~~~~~~~~~
 
 class Vehicle:
 
-    BASE_OPTS_MAP = {"Base Options" : {'choices' : ("Cruise Control", "Navigation System", "Heated Seats", "Power Mirrors", "Power Locks", 
-                    "Keyless Entry", "Bluetooth", "Backup Camera"), "isMultiSelect" : True}}
-    FUEL_OPTS_MAP = {"Fuel Options" : {'choices' : ("Gasoline", "Diesel", "Hybrid", "Electric"), "isMultiSelect" : False}}
-
+ 
     def __init__(self, make, model, color, options = None, fuelType = None):
         """Full constructor for a Vehicle base class.
 
@@ -32,6 +27,19 @@ class Vehicle:
         self.color = color
         self.fuelType = fuelType
         self.options = options
+        # Configure the available options, changing anything here will affect baseopts for all subclasses
+        self.equipOpts = {"Base Options" : {
+                                "choices" : ("Cruise Control", "Navigation System", "Heated Seats", "Power Mirrors", "Power Locks", 
+                                                "Keyless Entry", "Bluetooth", "Backup Camera"), 
+                                "isMultiSelect" : True ,
+                                "setCallback" : self.setOptions 
+                                },
+                         "Fuel Options" : {
+                                "choices" : ("Gasoline", "Diesel", "Hybrid", "Electric"), 
+                                "isMultiSelect" : False ,
+                                "setCallback" : self.setFuelType
+                                }
+                        }
     
     def getMake(self):
         return self.make
@@ -46,22 +54,64 @@ class Vehicle:
         return self.options
     
     def setOptions(self, opts):
-        self.options = options
+        self.options = opts
+
+    def getFuelType(self):
+        return self.fuelType
 
     def setFuelType(self, fuel):
         self.fuelType = fuel
 
     def isElectric(self):
-        return(self.fuelType == "Eletric")
+        return(self.fuelType == "Electric")
 
     def isHybrid(self):
         return(self.fuelType == "Hybrid")
 
     def getBaseEquipOpts(self):
-        return Vehicle.BASE_OPTS_MAP
+        return self.equipOpts
 
-    def getFuelOpts(self):
-        return Vehicle.FUEL_OPTS_MAP
+    # Ordinarily you wouldn't put UI, even CLI UI, components in a class due to the best practices
+    # of separation of concerns, i.e. keep presentation tier from model and controller. But the 
+    # logic here is very specific to Vehicle objects but also quite generic across them based on design.
+    # Another option is to put this in a UI specicifc class and use mixins.
+    def prompt_options(self, prompt, optionsDict):
+        ''' Given a top-level prompt string and an options dictionary from a Vehicle class,
+            prompt the user for each option accordingly. Some options are multiple choice
+            and not mutually exclusive, some are mutually exlsuive. The method prompts the
+            user with either Y/N or a numbered menu accordingly.
+            @param prompt - A String to prompt for the top level
+            @param optionsDict - A dictionary from the Vehicle class base options to gather choices from
+
+            @return - An array of all the chosen options.
+        '''
+        chosenOpts = []
+        print(prompt)
+        # optionsDict structure is map of option levels, and each level has choices (tuple),
+        #  multiselect (boolean), and a callback to set the values. So loop through levels 
+        # and each set of options.
+        for optLevel, opts in optionsDict.items():
+            choice, localOpts = None, []
+            setter = opts['setCallback']
+            print()
+            if opts['isMultiSelect']:
+                print(f"Let's pick your {optLevel}:")
+                # loop and ask Y/N is they want each option, save each yes.
+                for option in opts['choices']:
+                    c = input(f"{option} [Y/N?]: ")
+                    if c.lower() == 'y':
+                        localOpts.append(option)
+                setter(localOpts) # Use the callback to set 
+                chosenOpts += localOpts
+                localOpts.clear()
+            else:
+                # print menu with numbers to select jus tone of many options, save chosen value
+                choice = utils.menufy(optLevel, opts['choices'])
+                setter(choice[1])
+                chosenOpts.append(choice[1])
+                choice = None
+
+        return chosenOpts
 
     def __str__(self):
         toStr = f"A {self.color} {self.make} {self.model} with a {self.fuelType} powered engine.\n"
@@ -70,16 +120,23 @@ class Vehicle:
 
 class Car(Vehicle):
 
-    CAR_OPTS_MAP = {'Engine Size' : { 'choices': ("1.5L V3", "2.0L v4", "2.5L v5", "3.0L V6", "4.0L V8"), 'isMultiSelect' : False},
-                    'Number of Doors' : { 'choices' : (2, 4, 5), 'isMultiSelect' : False}}
-
     def __init__(self, make, model, color, options = None, fuelType = None, engineSize = None, numDoors = 2):
     
         super().__init__(make, model, color, options, fuelType)
         self.engineSize = engineSize
         self.numDoors = numDoors
+        carOpts = {"Engine Size" : {
+                                "choices": ("1.5L V3", "2.0L v4", "2.5L v5", "3.0L V6", "4.0L V8"), 
+                                "isMultiSelect" : False ,
+                                "setCallback" :  self.setEngineSize },
+                            "Number of Doors" : { 
+                                "choices" : (2, 4, 5), 
+                                "isMultiSelect" : False,
+                                "setCallback" :  self.setNumDoors }
+                            }
+        # This merges the parent options with the options specifci to this class
         superBase = super().getBaseEquipOpts()
-        self.equipOpts = {**superBase, **Car.CAR_OPTS_MAP}
+        self.equipOpts = {**superBase, **carOpts}
 
     def getNumDoors(self):
         return self.numDoors
@@ -87,8 +144,11 @@ class Car(Vehicle):
     def getEngineSize(self):
         return self.engineSize
 
-    def getBaseEquipOpts(self):
-        return self.equipOpts
+    def setNumDoors(self, num):
+        self.numDoors = num
+    
+    def setEngineSize(self, size):
+        self.engineSize = size
 
     def __str__(self):
         toStr = f"A {self.color} {self.numDoors} door {self.make} {self.model} sedan with a {self.fuelType} powered {self.engineSize} engine.\n"
@@ -97,24 +157,43 @@ class Car(Vehicle):
 
 class Pickup(Vehicle):
 
-    PICKUP_OPTS_MAP = { 'Cab Style' : {'choices' : ("Standard", "Extra", "Crew", "Double"), 'isMultiSelect' : False},
-                        'Bed Length' : {'choices' : ("Short Bed (5’8″ Box)", "Standard Bed (6.5′ Box)", "Long Bed (8′ Box)"), 'isMultiSelect' : False}}
-
+    
     def __init__(self, make, model, color, options = None, fuelType = None, cabStyle = None, bedLength = None):
 
         super().__init__(make, model, color, options, fuelType)
         self.cabStyle = cabStyle
         self.bedLength = bedLength
+        pickupOptsMap = { "Cab Style" : {
+                            "choices" : ("Standard", "Extra", "Crew", "Double"),
+                            "isMultiSelect" : False,
+                            "setCallback" : self.setCabStyle},
+                        "Bed Length" : {
+                            "choices" : ("Short Bed (5’8″ Box)", "Standard Bed (6.5′ Box)", "Long Bed (8′ Box)"),
+                            "isMultiSelect" : False,
+                            "setCallback" : self.setBedLength}
+                        }
+ 
+        # This merges the parent options with the options sepcfic to this class
         superBase = super().getBaseEquipOpts()
-        self.equipOpts = {**superBase, **Car.CAR_OPTS_MAP}
+        self.equipOpts = {**superBase, **pickupOptsMap}
 
     def __str__(self):
         toStr = f"A {self.color} {self.cabStyle} cab {self.make} {self.model} with a {self.fuelType} powered engine\n"
         toStr += f"Optional equipment: {self.options}"
         return toStr
 
-    def getBaseEquipOpts(self):
-        return self.equipOpts
+    def getCabStyle(self):
+        return self.cabStyle
+
+    def setCabStyle(self,  style):
+        self.cabStyle = style
+        
+    def getBedLength(self):
+        return self.bedLength
+
+    def setBedLength(self, length):
+        self.bedLength = length
+
 
 class VirtualGarage:
 
@@ -134,7 +213,7 @@ class VirtualGarage:
 
     def __str__(self):
         ret_str = ""
-        for door, vehicle in enumerate(vehicles):
-            ret_str += f"In garage door #{door} we have {vehicle}"
+        for door, vehicle in enumerate(self.vehicles):
+            ret_str += f"In garage door #{door} we have {vehicle}\n"
         return ret_str
     
