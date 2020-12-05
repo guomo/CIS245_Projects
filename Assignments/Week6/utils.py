@@ -7,7 +7,6 @@
 '''
 import re
 
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~ UTILITY METHODS  ~~~~~~~~~~~~~~
 def str_as_number(aStr, neg_ok = False):
     ''' Converts a string to the appropriate number type either float or int.
@@ -41,15 +40,21 @@ def menufy(optName, optTup):
         @return tuple - Chosen # and option
     '''
 
-    choice = 0
+    choice, good = 0, False
     print(f"Select one of the following {optName}:")
     # Display a menu of options
     for i, opt in enumerate(optTup):
         print(f"{i+1}. {opt}")
-    try:
-        choice = str_as_number(input("choice:")) - 1
-    except TypeError as ex:
-        # bad input, use first choice as default
-        choice = 0
-        print("That wasn't an option, so let's go with the default of {}")
+    while not good:
+        try:
+            choice = str_as_number(input("choice:"))
+            if choice > 0 and choice < len(optTup):
+                good = True
+                choice = choice - 1
+            else:
+                print(f"That wasn't an option, pick a number between 1 and {len(optTup)+1}")
+        except TypeError as ex:
+            # bad input, use first choice as default
+            print("That wasn't an option, try a number this time...")
+
     return (choice, optTup[choice])

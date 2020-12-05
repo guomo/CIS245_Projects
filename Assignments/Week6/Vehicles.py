@@ -35,7 +35,7 @@ class Vehicle:
                                 "setCallback" : self.setOptions 
                                 },
                          "Fuel Options" : {
-                                "choices" : ("Gasoline", "Diesel", "Hybrid", "Electric"), 
+                                "choices" : ("Gasoline", "Diesel", "Hybrid"), 
                                 "isMultiSelect" : False ,
                                 "setCallback" : self.setFuelType
                                 }
@@ -54,7 +54,7 @@ class Vehicle:
         return self.options
     
     def setOptions(self, opts):
-        self.options = opts
+        self.options = list(opts)
 
     def getFuelType(self):
         return self.fuelType
@@ -214,6 +214,6 @@ class VirtualGarage:
     def __str__(self):
         ret_str = ""
         for door, vehicle in enumerate(self.vehicles):
-            ret_str += f"In garage door #{door} we have {vehicle}\n"
+            ret_str += f"In garage door #{door+1} we have {vehicle}\n"
         return ret_str
     

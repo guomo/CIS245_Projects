@@ -68,11 +68,9 @@ if __name__ == "__main__":
     
     # Minimum of one of each vehicle type is required, so just satsify that up front
     print("\nSince everyone needs a car let's start with your first car.")
-    car = configure_new_vehicle(Car)
-    the_garage.parkVehicle(car)
+    the_garage.parkVehicle(configure_new_vehicle(Car))
     print("\nYou always need a pickup for doing the dirty work, tell me about your Pickup truck.")
-    pickup = configure_new_vehicle(Pickup)
-    the_garage.parkVehicle(pickup)
+    the_garage.parkVehicle(configure_new_vehicle(Pickup))
 
     # Loop until the garage is full
     while not the_garage.atCapacity():
@@ -85,9 +83,7 @@ if __name__ == "__main__":
                 clazz = Pickup
             else:
                 print("Please enter either C for a car or P for a pickup.")
-
-        new_vehicle = configure_new_vehicle(clazz)
-        the_garage.parkVehicle(new_vehicle)
+        the_garage.parkVehicle(configure_new_vehicle(clazz))
     
     # Print out the vehicles in the garage
     print(f"Congratulations! You've filled your {the_garage.getCapacity()} car garage. Let's see what's inside:\n")
