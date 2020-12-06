@@ -12,14 +12,42 @@ The flow of the final project is shown below:
 
 ![Original Flow Chart](img/ClassProjectFlow.png)
 
-There are two files in this repo:
+The file ClassProject-draft.py is really a complete working program that mostly follows the above flow chart.
+To run type `python ClassProject-draft.py` in a terminal or cmd shell.
 
-ClassProject-draft.py
+### Sample output
+```
+__    __   ___  ____ ______ __ __   ___ ____        ___  ____       ____   ___  ______ 
+|  |__|  | /  _]/    |      |  |  | /  _|    \      /   \|    \     |    \ /   \|      |
+|  |  |  |/  [_|  o  |      |  |  |/  [_|  D  )    |     |  D  )    |  _  |     |      |
+|  |  |  |    _|     |_|  |_|  _  |    _|    /     |  O  |    /     |  |  |  O  |_|  |_|
+|  `  '  |   [_|  _  | |  | |  |  |   [_|    \     |     |    \     |  |  |     | |  |  
+ \      /|     |  |  | |  | |  |  |     |  .  \    |     |  .  \    |  |  |     | |  |  
+  \_/\_/ |_____|__|__| |__| |__|__|_____|__|\_|     \___/|__|\_|    |__|__|\___/  |__|  
+                                                                                        
+--------------------------------------------------------------------------------------------
+Welcome to Weather or Not, the real-time weather service tool.
 
-ClassProject.py
 
-It was necessary because in the world of code there is no such thing as a draft. Code either compiles or it doesn't. Then it either works as intended or it doesn't. I have no idea what a draft is. 
 
-When I program I typically start out with a version of source that includes comments, function stubs, when the language supoprts interfaces I define the interfaces but don't implement the code in any of the implementations. This helps me grok if I am on the right path with abstractions, code organization, program flow, etc. Plus it means I write my documentation first. Next I write my unit tests that should all fail initially.
+Enter your location in one of the following ways:
+City, Country e.g. Milan, Italy
+City, State, Country e.g. Cupertino, CA, US
+ or a US zipcode e.g. 95050
+type [Q]uit to exit.
 
-So, the first file is basically that without the unit tests. The second is the fully working program just in case the Professor expected something to run and output. It was such an easy assignment I wouldn't know where to stop and say, that is *drafty* enough, so I just wrote the whole thing in an hour.
+Get weather for: 95014
+        Connecting to weather service...
+
+The weather for Cupertino,US is:
+Temperature of 48.04° with haze, with winds at 3.36mph and 81% humidity.
+
+Get weather for: Boston,MA,US
+        Connecting to weather service...
+
+The weather for Boston,US is:
+Temperature of 35.56° with scattered clouds, with winds at 23.04mph and 51% humidity.
+
+Get weather for: Q
+Goodbye!
+```
