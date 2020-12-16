@@ -26,17 +26,15 @@ City, State, Country e.g. Cupertino, CA, US
  or a US zipcode e.g. 95050
 type [Q]uit to exit.
 
-Get weather for: 95014
-        Connecting to weather service...connection succesful.
+Get weather for: Rogers,AR,US
+        Connecting to weather service...connection successful.
+The weather for Rogers,US is:
+Temperature of 28.44° with overcast clouds, with winds at 10.29mph and 86% humidity.
 
-The weather for Cupertino,US is:
-Temperature of 48.04° with haze, with winds at 3.36mph and 81% humidity.
-
-Get weather for: Boston,MA,US
-        Connecting to weather service...connection succesful.
-
-The weather for Boston,US is:
-Temperature of 35.56° with scattered clouds, with winds at 23.04mph and 51% humidity.
+Get weather for: 95050
+        Connecting to weather service...connection successful.
+The weather for Santa Clara,US is:
+Temperature of 51.48° with few clouds, with winds at 4.7mph and 47% humidity.
 
 Get weather for: Q
 Goodbye!
