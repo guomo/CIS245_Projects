@@ -97,7 +97,7 @@ def open_weather_connect(options):
         if(resp.status_code == 200):
             # Good stuff, it liked our city or zip
             # Get the JSON response as a pythong dict
-            print("connection succesful.")
+            print("connection successful.")
             weather_data = resp.json()
         else:
             # Possibly no city or zip found, check status for more details
