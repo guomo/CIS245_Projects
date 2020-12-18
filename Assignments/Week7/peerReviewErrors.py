@@ -1,8 +1,8 @@
 # This is a header for the application
 # You should read this header and insert your name and your date below as part of the peer review
 # This is a typical part of any program
-# Author: <author>
-# Creation Date: <date>
+# Author: Gregory Stone
+# Creation Date: 4 Dec 2020
 # Below is a simple program with 10 issues (some are syntax errors and some are logic errors.  You need to identify the issues and correct them.
 
 import random
@@ -16,12 +16,14 @@ def displayIntro():
 	print()
 
 def chooseCave():
-    cave = ''
+    # cave = '' <-- bad indent using spaces instead of tab
+	cave = ''
 	while cave != '1' and cave != '2':
 		print('Which cave will you go into? (1 or 2)')
 		cave = input()
 
-	return caves
+#	return caves <-- wrong variable name
+	return cave
 
 def checkCave(chosenCave):
 	print('You approach the cave...')
@@ -29,7 +31,8 @@ def checkCave(chosenCave):
 	time.sleep(2)
 	print('It is dark and spooky...')
 	#sleep for 2 seconds
-	time.sleep(3)
+	# time.sleep(3) <-- Incorrect sleep length
+	time.sleep(2)
 	print('A large dragon jumps out in front of you! He opens his jaws and...')
 	print()
 	#sleep for 2 seconds
@@ -39,16 +42,21 @@ def checkCave(chosenCave):
 	if chosenCave == str(friendlyCave):
 		print('Gives you his treasure!')
 	else:
-		print 'Gobbles you down in one bite!'
+		# print 'Gobbles you down in one bite!' <-- Must use parens with print in py3
+		print('Gobbles you down in one bite!')		
 
 playAgain = 'yes'
-while playAgain = 'yes' or playAgain = 'y':
+# while playAgain = 'yes' or playAgain = 'y': <-- You want equality not assigment
+while playAgain == 'yes' or playAgain == 'y':
 	displayIntro()
-	caveNumber = choosecave()
+	# caveNumber = choosecave() <-- case typo
+	caveNumber = chooseCave()
 	checkCave(caveNumber)
     
 	print('Do you want to play again? (yes or no)')
 	playAgain = input()
-	if playAgain == "no":
-		print("Thanks for planing")
+	# if playAgain == "no": <- Should probably check for 'n' a well to be consistant with yes responses
+	if playAgain == "no" or playAgain == "n":
+		# print("Thanks for planing") <- typo in output
+		print("Thanks for playing")
 
