@@ -13,21 +13,37 @@ def prompt_data_out():
 
     while not p:
         # Get the directory to store the file in
-        working_dir = input("What directory would you like to store you data? ")
-        # on unix systems users can specify their home dir with alias ~, expand if need be
-        p = Path(working_dir).expanduser()
+        working_dir = input("What directory would you like to store your data? ")
+        # on unix systems users can specify their home dir with alias ~, expand if need be; resolve is in case there are symlinks
+        p = Path(working_dir).expanduser().resolve() 
         # Check for existance and write permissions 
-        if os.path.exists(p) and os.access(p, os.R_OK | os.W_OK | os.X_OK ) and os.path.isdir(p):
-            while True:
-                fp = Path(p, input ("Enter a filename to store your data: "))
-                if fp.exists() and not os.access(fp, os.W_OK):
-                    print("That file already exists and you don't have access to overwrite, pick another name.")
-                else:
-                    p = fp
-                    break
+        if not os.path.exists(p):
+            print("That directory does not exist.")
+            mkdir = input("Would you like to to create it [y/n]?")
+            if mkdir.lower().startswith('y'):
+                try:
+                    os.makedirs(p, exist_ok=True)
+                except PermissionError as permEx:
+                    print("Sorry, You don't have permsisions in one or more of the directories to create that directory. Try Again.")
+                    p = None
+                except FileExistsError as fileEx:
+                    print("Sorry, the path specified is actually an existing file not directory. Try Again.")
+                    p = None
+            else:
+                p = None
+        elif os.path.isdir(p):
+            print("Sorry, a file already exists with that directory name. Try again.")
+            p = None
+
+    # Now get the filename to store the data in
+    while True:
+        fp = Path(p, input ("Enter a filename to store your data: "))
+        if fp.exists() and not os.access(fp, os.W_OK):
+            print("That file already exists and you don't have access to overwrite, pick another name.")
         else:
-            os._exists(p)
-            print("That directory not exists")
+            p = fp
+            break
+
     return p
 
 def prompt_data_in(dest_file):
