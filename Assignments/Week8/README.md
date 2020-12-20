@@ -20,8 +20,8 @@ Data saved...
 /tmp/foo.txt contents are :
 
 
-Gregory Stone, 506 S 3rd street, 408-410-9899
+Gregory Stone, 506 S Razorback Street, 408-555-1345
 Karen Stone, 123 Main St, 702-321-5400
 Linda Stone, 434 Braintree Ave., 306-443-8832
-LeeLee Stone, 472 N Winchester Blvd., 408-410-9898
+LeeLee Stone, 472 N Winchester Blvd., 408-555-9000
 ```
